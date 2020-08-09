@@ -21,3 +21,4 @@ services:
             - zookeeper
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
+            - /mnt/data/kafka/data:/kafka
