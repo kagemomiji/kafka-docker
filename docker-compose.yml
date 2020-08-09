@@ -22,6 +22,31 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - kafka-data:/kafka
+
+    rest-proxy:
+        image: confluentinc/cp-kafka-rest:5.5.1
+        depends_on:
+          - zookeeper
+          - kafka
+        ports:
+          - 8082:8082
+        hostname: rest-proxy
+        environment:
+          KAFKA_REST_HOST_NAME: rest-proxy
+          KAFKA_REST_BOOTSTRAP_SERVERS: 'kafka:9092'
+          KAFKA_REST_LISTENERS: http://0.0.0.0:8082
+    
+    topics-ui:
+        image: landoop/kafka-topics-ui:latest
+        ports: 
+            - "8000:8000"
+        depends_on: 
+            - rest-proxy
+        environment: 
+            KAFKA_REST_PROXY_URL: http://rest-proxy:8082
+            PROXY: 'true'
+
+     
 volumes: 
     kafka-data:
         driver: local
